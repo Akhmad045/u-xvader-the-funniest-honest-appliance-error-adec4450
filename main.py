@@ -22,6 +22,12 @@ def main():
         os.makedirs(parent, exist_ok=True)
     with open(out, "w", encoding="utf-8", newline="") as f:
         f.write(LINE)
+    # Read back and verify the written entry is byte-identical to the
+    # chosen line, so a silent write failure can never ship a wrong entry.
+    with open(out, "rb") as f:
+        written = f.read()
+    if written != LINE.encode("utf-8"):
+        raise SystemExit("written entry does not match the chosen line")
 
 
 if __name__ == "__main__":
